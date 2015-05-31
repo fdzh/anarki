@@ -7,13 +7,13 @@
 
 (declare 'atstrings t)
 
-(= this-site*    "Fedora News"
-   site-url*     "http://news.fdzh.org/"
+(= this-site*    "Fedora Hack"
+   site-url*     "http://hack.fdzh.org/"
    parent-url*   "http://www.fdzh.org"
    favicon-url*  "http://fedoraproject.org/favicon.ico"
    site-desc*    "about fedora."               ; for rss feed
-   site-color*   (color 110 195 201)
-   border-color* (color 180 180 180)
+   site-color*   (color 0 0 0)
+   border-color* (color 0 0 0)
    prefer-url*   t)
 
 
@@ -302,7 +302,7 @@
   (= ranked-stories* (rank-stories 180 1000 (memo frontpage-rank))))
 
 (def save-topstories ()
-  (writefile (map !id (firstn 180 ranked-stories*))
+  (writefile (map !id (firstn 280 ranked-stories*))
              (+ newsdir* "topstories")))
 
 (def rank-stories (n consider scorefn)
@@ -395,14 +395,16 @@
        (prn "<link rel=\"shortcut icon\" href=\"" favicon-url* "\">")
        (prn "<meta name=\"viewport\" content=\"width=device-width\">")
        (tag script (pr votejs*))
-       (tag title (pr ,title)))
+       (tag title (pr ,title))
+       (prn "<meta name=\"description\" content=\"Fedora Hack 是包括但不限于 Fedora/Linux/Github 的开发者，爱好者和布道者（统称 Hacker）的新闻/问答/教程交流社区\" /> ")
+        )
      (tag body
 
        (center
          (tag (table border 0 cellpadding 0 cellspacing 0 width "85%"
                      bgcolor sand)
            ,@body)
-(prn "<a href='http://star.fdzh.org/p/401/'>FAQ</a>  All rights belong to GOD")
+(prn "<a href='http://hack.fdzh.org/item?id=498'>FAQ</a> | <a href='http://hack.fdzh.org/1.html'>Bookmarklet</a><br> Powered by <a href='https://github.com/FZUG/'>FZUG</a> All rights belong to GOD")
         ))))
 
 (= pagefns* nil)
@@ -466,39 +468,40 @@
 
 (defop news.css req
   (pr "
-body  { font-family:'Helvetica Neue',Verdana; font-size:12pt; color:#828282;width:780px; margin:6px auto;  }
-td    { font-family:'Helvetica Neue',Verdana; font-size:12pt; color:#828282; padding-left:3px;}
+* {margin:0;padding:0;}
+body  { font-family:'Helvetica Neue',Verdana; font-size:12pt; color:#008000; background: #000;}
+td    { font-family:'Helvetica Neue',Verdana; font-size:12pt; color:#5FE80F; padding-left:8px;}
 
-.admin td   { font-family:Verdana; font-size:8.5pt; color:#000000; }
-.subtext td { font-family:Verdana; font-size:  7pt; color:#828282; }
+.admin td   { font-family:Verdana; font-size:8.5pt; color:#008000; }
+.subtext td { font-family:Verdana; font-size:  7pt; color:#008000; }
 
-input    { font-family:Courier; font-size:12pt; color:#000000; }
+input    { font-family:Courier; font-size:12pt; color:#008000; }
 input[type=\"submit\"] { font-family:Verdana; }
-textarea { font-family:Courier; font-size:12pt; color:#000000; }
+textarea { font-family:Courier; font-size:12pt; color:#008000; }
 
-a:link    { color:#000000; text-decoration:none; }
-a:visited { color:#828282; text-decoration:none; }
+a:link    { color:#5FE80F; text-decoration:none; }
+a:visited { color:#008050; text-decoration:none; }
 
-.default { font-family:Verdana; font-size: 10pt; color:#828282; }
-.admin   { font-family:Verdana; font-size:  9pt; color:#000000; }
-.title   { font-family:Verdana; font-size: 11pt; color:#828282; }
-.adtitle { font-family:Verdana; font-size:  9pt; color:#828282; }
-.subtext { font-family:Verdana; font-size:  7pt; color:#828282; }
-.yclinks { font-family:Verdana; font-size:  8pt; color:#828282; }
-.pagetop { font-family:Verdana; font-size: 10pt; color:#222222; }
-.comhead { font-family:Verdana; font-size:  8pt; color:#828282; }
-.comment { font-family:Verdana; font-size:  9pt; }
+.default { font-family:Verdana; font-size: 10pt; color:#008000; }
+.admin   { font-family:Verdana; font-size:  9pt; color:#008000; }
+.title   { font-family:Verdana; font-size: 12pt; color:#5FE80F; }
+.adtitle { font-family:Verdana; font-size:  9pt; color:#008000; }
+.subtext { font-family:Verdana; font-size:  7pt; color:#439443; }
+.yclinks { font-family:Verdana; font-size:  8pt; color:#008000; }
+.pagetop { font-family:Verdana; font-size: 11pt; color:#C5BF50; }
+.comhead { font-family:Verdana; font-size:  8pt; color:#008000; }
+.comment { font-family:Verdana; font-size:  10pt; color:#5FE80F; }
 .dead    { font-family:Verdana; font-size:  9pt; color:#dddddd; }
 
 .comment a:link, .comment a:visited { text-decoration:underline;}
 .dead a:link, .dead a:visited { color:#dddddd; }
-.pagetop a:visited { color:#000000;}
+.pagetop a:visited { color:#5FE80F;}
 .topsel a:link, .topsel a:visited { color:#ffffff; }
 
-.subtext a:link, .subtext a:visited { color:#828282; }
+.subtext a:link, .subtext a:visited { color:#50B650; }
 .subtext a:hover { text-decoration:underline; }
 
-.comhead a:link, .subtext a:visited { color:#828282; }
+.comhead a:link, .subtext a:visited { color:#008000; }
 .comhead a:hover { text-decoration:underline; }
 
 .default p { margin-top: 8px; margin-bottom: 0px; }
@@ -521,7 +524,7 @@ pre:hover {overflow:auto}
 ; have different space at the bottom.  This solution suggested by Devin.
 ; Really am using p tags wrong (as separators rather than wrappers) and the
 ; correct thing to do would be to wrap each para in <p></p>.  Then whatever
-; I set the bottom spacing to, it would be the same no matter how many paras
+; I set the bottom spacing to, it would be the same? no matter how many paras
 ; in a comment. In this case by setting the bottom spacing of p to 0, I'm
 ; making it the same as no p, which is what the first para has.
 
@@ -555,12 +558,23 @@ function vote(node) {
   ping.src = node.href;
 
   return false; // cancel browser nav
-} ")
+}
+</script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-47480129-11', 'auto');
+  ga('send', 'pageview');
+
+
+")
 
 
 ; Page top
 
-(= sand (color 246 246 239) textgray (gray 130))
+(= sand (color 0 0 0) textgray (gray 130))
 
 (def main-color (user)
   (aif (and user (uvar user topcolor))
@@ -593,7 +607,7 @@ function vote(node) {
       (tag (img src logo-url* width 18 height 18
                 style "border:1px #@(hexrep border-color*) solid;")))))
 
-(= toplabels* '(nil "welcome" "new" "ask" "threads" "comments" "official" "leaders" "*"))
+(= toplabels* '(nil "welcome" "new" "ask" "ppt" "comments" "official" "hackers" "*"))
 
 (= welcome-url* "welcome")
 
@@ -603,11 +617,10 @@ function vote(node) {
       (toplink "welcome" welcome-url* label))
     (toplink "new" "newest" label)
     (toplink "ask" "ask" label)
-    (when user
-      (toplink "threads" (threads-url user) label))
+    (toplink "ppt" "ppt" label)
     (toplink "comments" "newcomments" label)
     (toplink "official" "official" label)
-    (toplink "leaders"  "leaders"     label)
+    (toplink "hackers"  "leaders"     label)
     (hook 'toprow user label)
     (link "submit")
     (unless (mem label toplabels*)
@@ -850,10 +863,17 @@ function vote(node) {
 (newsop newest () (newestpage user))
 
 (newsop official ()
-  (listpage user (msec) (keep showpage-filter ranked-stories*) "officail" nil))
+  (listpage user (msec) (keep showpage-filter ranked-stories*) "official" nil))
 
 (def showpage-filter (s)
   (and (astory s) (begins (downcase s!title) "official:")))
+
+(newsop ppt ()
+  (listpage user (msec) (keep pptpage-filter ranked-stories*) "ppt" nil))
+
+(def pptpage-filter (s)
+  (and (astory s) (begins (downcase s!title) "ppt:")))
+
 
 (newsop ask ()
   (listpage user (msec) (keep askpage-filter ranked-stories*) "ask" nil))
@@ -1005,7 +1025,7 @@ function vote(node) {
           (pdflink url)
           (awhen (sitename url)
             (spanclass comhead
-              (pr " (" )
+              (pr " " )
               (if (admin user)
                 (w/rlink (do (set-site-ban user
                                            it
@@ -1020,7 +1040,7 @@ function vote(node) {
                                               kill   darkblue))
                       (pr it))))
                 (pr it))
-              (pr ") "))))
+              (pr " "))))
       (pr (pseudo-text s)))))
 
 (def titlelink (s url user)
@@ -1458,7 +1478,7 @@ function vote(node) {
               (row "" "<b>or</b>")
               (row "url" (input "u" url 50))))
         (row "" (submit))
-        (spacerow 20)
+        (spacerow 50)
         (row "" submit-instructions*)))))
 
 (= submit-instructions*
@@ -1774,7 +1794,7 @@ function vote(node) {
                                  (pr (if (~blank o!title) o!title o!text)))
                                (if (and (~blank o!title) (~blank o!url))
                                    (link o!title o!url)
-                                   (fontcolor black (pr o!text)))))))
+                                   (fontcolor green (pr o!text)))))))
   (tr (if n (td))
       (td)
       (tag (td class 'default)
@@ -2125,8 +2145,7 @@ function vote(node) {
       (spanclass comment
         (if (~cansee user c)               (pr (pseudo-text c))
             (nor (live c) (author user c)) (spanclass dead (pr c!text))
-                                           (fontcolor (comment-color c)
-                                             (pr c!text))))
+                                             (pr c!text)))
       (when (and astree (cansee user c) (live c))
         (para)
         (tag (font size 1)
@@ -2270,7 +2289,7 @@ function vote(node) {
 
 (newsop leaders () (leaderspage user))
 
-(= nleaders* 20)
+(= nleaders* 42)
 
 (newscache leaderspage user 1000
   (longpage user (msec) nil "leaders" "Leaders" "leaders"
