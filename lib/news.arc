@@ -7,8 +7,8 @@
 
 (declare 'atstrings t)
 
-(= this-site*    "Fedora News"
-   site-url*     "http://news.fdzh.org/"
+(= this-site*    "Fedora Hack"
+   site-url*     "http://hack.fdzh.org/"
    parent-url*   "http://www.fdzh.org"
    favicon-url*  "http://fedoraproject.org/favicon.ico"
    site-desc*    "about fedora."               ; for rss feed
@@ -302,7 +302,7 @@
   (= ranked-stories* (rank-stories 180 1000 (memo frontpage-rank))))
 
 (def save-topstories ()
-  (writefile (map !id (firstn 180 ranked-stories*))
+  (writefile (map !id (firstn 280 ranked-stories*))
              (+ newsdir* "topstories")))
 
 (def rank-stories (n consider scorefn)
@@ -395,14 +395,17 @@
        (prn "<link rel=\"shortcut icon\" href=\"" favicon-url* "\">")
        (prn "<meta name=\"viewport\" content=\"width=device-width\">")
        (tag script (pr votejs*))
-       (tag title (pr ,title)))
+       (tag title (pr ,title)
+        )       (prn "<meta name=\"description\" content=\"Fedora Hack 是包括但不限于 Fed
+ora/Linux/Github 的开发者，爱好者和布道者（统称 Hacker）的新闻/问答/教程交流社区
+\" /> "))
      (tag body
 
        (center
          (tag (table border 0 cellpadding 0 cellspacing 0 width "85%"
                      bgcolor sand)
            ,@body)
-(prn "<a href='http://star.fdzh.org/p/401/'>FAQ</a>  All rights belong to GOD")
+(prn "<a href='http://hack.fdzh.org/item?id=498'>FAQ</a> | <a href='http://hack.fdzh.org/1.html'>Bookmarklet</a><br> Powered by <a href='https://github.com/FZUG/'>FZUG</a> All rights belong to GOD")
         ))))
 
 (= pagefns* nil)
@@ -490,7 +493,9 @@ a:visited { color:#008050; text-decoration:none; }
 .comhead { font-family:Verdana; font-size:  8pt; color:#008000; }
 .comment { font-family:Verdana; font-size:  10pt; color:#5FE80F; }
 .dead    { font-family:Verdana; font-size:  9pt; color:#dddddd; }
-
+a[href='submit'] {
+color: #f9d152 !important;
+}
 .comment a:link, .comment a:visited { text-decoration:underline;}
 .dead a:link, .dead a:visited { color:#dddddd; }
 .pagetop a:visited { color:#5FE80F;}
@@ -557,6 +562,14 @@ function vote(node) {
 
   return false; // cancel browser nav
 }
+</script><script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-47480129-11', 'auto');
+  ga('send', 'pageview');
 
 
 ")
@@ -597,7 +610,7 @@ function vote(node) {
       (tag (img src logo-url* width 18 height 18
                 style "border:1px #@(hexrep border-color*) solid;")))))
 
-(= toplabels* '(nil "welcome" "new" "ask" "threads" "comments" "official" "leaders" "*"))
+(= toplabels* '(nil "welcome" "new" "ask" "ppt" "comments" "official" "hackers" "*"))
 
 (= welcome-url* "welcome")
 
@@ -607,11 +620,10 @@ function vote(node) {
       (toplink "welcome" welcome-url* label))
     (toplink "new" "newest" label)
     (toplink "ask" "ask" label)
-    (when user
-      (toplink "threads" (threads-url user) label))
+    (toplink "ppt" "ppt" label)
     (toplink "comments" "newcomments" label)
     (toplink "official" "official" label)
-    (toplink "leaders"  "leaders"     label)
+    (toplink "hackers"  "leaders"     label)
     (hook 'toprow user label)
     (link "submit")
     (unless (mem label toplabels*)
@@ -813,7 +825,7 @@ function vote(node) {
   (tostring (underlink "reset password" "resetpw")))
 
 (newsop welcome ()
-  (pr "Welcome to " this-site* ", " user ",HAVE FUN! __________ FREEDOM. FRIENDS. FEATURES. FIRST."))
+  (pr "Welcome to " this-site* ", " user ",请确保您阅读过页脚的 FAQ。Have Fun!"))
 
 
 ; Main Operators
@@ -858,6 +870,13 @@ function vote(node) {
 
 (def showpage-filter (s)
   (and (astory s) (begins (downcase s!title) "official:")))
+
+(newsop ppt ()
+  (listpage user (msec) (keep pptpage-filter ranked-stories*) "ppt" nil))
+
+(def pptpage-filter (s)
+  (and (astory s) (begins (downcase s!title) "ppt:")))
+
 
 (newsop ask ()
   (listpage user (msec) (keep askpage-filter ranked-stories*) "ask" nil))
@@ -1462,13 +1481,14 @@ function vote(node) {
               (row "" "<b>or</b>")
               (row "url" (input "u" url 50))))
         (row "" (submit))
-        (spacerow 20)
+        (spacerow 50)
         (row "" submit-instructions*)))))
 
 (= submit-instructions*
-   "Leave url blank to submit a question for discussion. If there is
+   "<ol><li>请确保您阅读过页脚的 FAQ。</li>
+    <li>Leave url blank to submit a question for discussion. If there is
     no url, the text (if any) will appear at the top of the comments
-    page. If there is a url, the text will be ignored.")
+    page. </li><li>If there is a url, the text will be ignored.</li></ol>")
 
 ; For use by outside code like bookmarklet.
 ; http://news.domain.com/submitlink?u=http://foo.com&t=Foo
@@ -2273,7 +2293,7 @@ function vote(node) {
 
 (newsop leaders () (leaderspage user))
 
-(= nleaders* 20)
+(= nleaders* 42)
 
 (newscache leaderspage user 1000
   (longpage user (msec) nil "leaders" "Leaders" "leaders"
